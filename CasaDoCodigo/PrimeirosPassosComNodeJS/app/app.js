@@ -8,6 +8,12 @@ var expressNunjucks = require('express-nunjucks');
 var indexRouter = require('./routes/musicas');
 var methodOverride = require('method-override');
 
+require('./models/musics');
+var mongoose = require('mongoose');
+
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost/musics')
+
 var app = express();
 
 // view engine setup
@@ -44,7 +50,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json(res.locals);
 });
 
 module.exports = app;
