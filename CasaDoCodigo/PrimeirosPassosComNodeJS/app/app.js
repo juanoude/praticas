@@ -1,9 +1,14 @@
-var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
+var createError = require('http-errors');
 var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var passport = require('passport');
+require('./passport');
+
 var expressNunjucks = require('express-nunjucks');
+
 
 var indexRouter = require('./routes/musicas');
 var methodOverride = require('method-override');
@@ -19,7 +24,17 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'njk');
-var njk = expressNunjucks(app);
+var njk = expressNunjucks(app, {watch: true, noCache: true});
+
+//express-session config
+app.use(session({
+  secret: 'teste sessoes',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -27,6 +42,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+//Method override config
 app.use(methodOverride(function(req, res) {
   if(req.body && typeof req.body === 'object' && '_method' in req.body) {
     var method = req.body._method;

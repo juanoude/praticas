@@ -1,14 +1,22 @@
 var express = require('express');
+var router = express.Router();
+var passport = require('passport');
 
 //var db = require('../db');
 var mongoose = require('mongoose');
 
-var router = express.Router();
+var isAuth = require('../middlewares/authorize').isAuth;
+var isNotAuth = require('../middlewares/authorize').isNotAuth;
 
-router.get('/', (req, res, next) => {
+router.get('/', isAuth, (req, res, next) => {
+  
   mongoose.model('Musica').find()
     .then( (musicas) => {
-      res.render('index', { musicas: musicas });
+      res.render('index', { 
+        musicas: musicas,
+        session: req.session,
+        usuario: req.user
+      });
     }, next);
   
   // db("musicas").then((musicas) => {
@@ -19,11 +27,20 @@ router.get('/', (req, res, next) => {
 
 });
 
-router.get('/add', (req, res, next) => {
+router.get('/login', isNotAuth, (req, res, next) => {
+  res.render('login');
+});
+
+router.post('/', passport.authenticate('local', { 
+  successRedirect: '/',
+  failureRedirect: '/login',
+}));
+
+router.get('/add', isAuth, (req, res, next) => {
   res.render('add');
 });
 
-router.post('/', (req, res, next) => {
+router.post('/musica', isAuth, (req, res, next) => {
   var Musica = mongoose.model('Musica');
   var m = new Musica(req.body);
 
@@ -36,7 +53,7 @@ router.post('/', (req, res, next) => {
   // }, next);
 });
 
-router.get('/edit/:id', (req, res, next) => {
+router.get('/edit/:id', isAuth, (req, res, next) => {
   const {id} = req.params;
 
   mongoose.model('Musica').findOne({_id: id})
@@ -56,7 +73,7 @@ router.get('/edit/:id', (req, res, next) => {
   //   }, next);
 });
 
-router.put('/edit/:id', (req, res, next) => {
+router.put('/edit/:id', isAuth, (req, res, next) => {
   const {id} = req.params;
 
   mongoose.model('Musica').update({_id: id}, {
@@ -80,7 +97,7 @@ router.put('/edit/:id', (req, res, next) => {
 
 });
 
-router.delete('/delete/:id', (req, res, next) => {
+router.delete('/delete/:id', isAuth, (req, res, next) => {
   const {id} = req.params;
 
   mongoose.model('Musica').remove({_id: id})
