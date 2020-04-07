@@ -2,16 +2,15 @@ var db = require('./db');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
+
 passport.use(new LocalStrategy((username, password, done) => {
-  console.log(username);
-  db("users").where("name", username).first()
+
+  db("users").where("username", username).first()
     .then((user) => {
-      console.log(user);
-      console.log(req);
       if(!user || user.password !== password) {
         return done(null, false);
       }else {
-        done(null, user);
+        return done(null, user);
       }
     }, done);
 }));
@@ -22,7 +21,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   db("users").where("id", id).first()
-    .when((user) => {
+    .then((user) => {
       done(null, user);
     }, done);
 });

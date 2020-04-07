@@ -31,9 +31,9 @@ router.get('/login', isNotAuth, (req, res, next) => {
   res.render('login');
 });
 
-router.post('/', passport.authenticate('local', { 
-  successRedirect: '/',
-  failureRedirect: '/login',
+router.post('/', passport.authenticate('local', {
+  successRedirect:'/',
+  failureRedirect:'/login'
 }));
 
 router.get('/add', isAuth, (req, res, next) => {
