@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/add', isAuth, (req, res, next) => {
   res.render('add', {
-    isAuth: req.isAuthenticated();
+    isAuth: req.isAuthenticated()
   });
 });
 
@@ -35,7 +35,7 @@ router.get('/edit/:id', isAuth, (req, res, next) => {
       if(!task) {
         return res.send(400);
       }
-      res.render('/edit', {
+      res.render('edit', {
         task: task,
         isAuth: req.isAuthenticated()
       });
@@ -44,8 +44,11 @@ router.get('/edit/:id', isAuth, (req, res, next) => {
 
 router.put('/edit/:id', isAuth, (req, res, next) => {
   const {id} = req.params;
+
+  console.log(id);
+  console.log(req.body);
   
-  db("tasks").where("id", id).insert(req.body)
+  db("tasks").where("id", id).update(req.body)
     .then((result) => {
       if(result === 0) {
         return res.send(400);

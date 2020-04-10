@@ -6,7 +6,7 @@ var db = knex({
     host: 'localhost',
     user: 'root',
     password: 'mercurio',
-    database: 'tasklist'
+    database: 'tasks'
   }
 });
 

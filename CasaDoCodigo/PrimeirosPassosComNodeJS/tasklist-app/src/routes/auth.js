@@ -7,7 +7,7 @@ var db = require('../db');
 var isNotAuth = require('../middlewares/authorize').isNotAuth;
 
 router.get('/login', isNotAuth, function(req, res, next) {
-  res.render('/login');
+  res.render('login');
 });
 
 router.post('/', passport.authenticate('local', {
@@ -21,7 +21,7 @@ router.get('/logout', (req, res, next) => {
 });
 
 router.get('/register', isNotAuth, (req, res, next) => {
-  res.render('/register');
+  res.render('register');
 });
 
 router.post('/register', isNotAuth, (req, res, next) => {

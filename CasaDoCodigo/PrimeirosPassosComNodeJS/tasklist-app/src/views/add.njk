@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+
+{% block pagina %}
+
+<h1 class="page-header">Cadastro de Tarefas</h1>
+
+<div class="col-md-6">
+  <form action="/add" method="post">
+    <div class="form-group">
+      <label for="title">Título</label>
+      <input type="text" name="title" class="form-control" placeholder="Titulo">
+    </div>
+    <div class="form-group">
+      <label for="title">Descrição</label>
+      <input type="text" name="description" class="form-control" placeholder="Titulo">
+    </div>
+
+    <button class="btn btn-primary" type="submit">Cadastrar</button>
+    <a href="/" class="btn btn-default">Voltar</a>
+  </form>
+</div>
+
+{% endblock %}
