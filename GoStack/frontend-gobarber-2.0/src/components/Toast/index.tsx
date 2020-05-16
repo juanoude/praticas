@@ -2,46 +2,35 @@ import React from 'react';
 import { MdInfo, MdClose } from 'react-icons/md';
 import { Container, Toast } from './styles';
 
-const ToastComponent = () => (
-  <Container>
-    <Toast hasDescription>
-      <MdInfo size={18} />
+import { ToastMessage, useToast } from '../../hooks/ToastContext';
 
-      <div>
-        <strong> Aconteceu um erro </strong>
-        <p> Não foi possível fazer login na aplicação</p>
-      </div>
+interface ToastProps {
+  messages: ToastMessage[];
+}
 
-      <button type="button">
-        <MdClose size={18} />
-      </button>
-    </Toast>
+const ToastComponent = ({ messages }: ToastProps) => {
+  const { removeToast } = useToast();
+  return (
+    <Container>
+      {messages.map((message) => (
+        <Toast
+          key={message.id}
+          type={message.type}
+          hasDescription={!!message.description}
+        >
+          <MdInfo size={18} />
 
-    <Toast type="success" hasDescription={false}>
-      <MdInfo size={18} />
+          <div>
+            <strong>{message.title}</strong>
+            {message.description && <p>{message.description}</p>}
+          </div>
 
-      <div>
-        <strong> Aconteceu um erro </strong>
-      </div>
-
-      <button type="button">
-        <MdClose size={18} />
-      </button>
-    </Toast>
-
-    <Toast type="error" hasDescription>
-      <MdInfo size={18} />
-
-      <div>
-        <strong> Aconteceu um erro </strong>
-        <p> Não foi possível fazer login na aplicação</p>
-      </div>
-
-      <button type="button">
-        <MdClose size={18} />
-      </button>
-    </Toast>
-  </Container>
-);
-
+          <button onClick={() => removeToast(message.id)} type="button">
+            <MdClose size={18} />
+          </button>
+        </Toast>
+      ))}
+    </Container>
+  );
+};
 export default ToastComponent;

@@ -37,6 +37,10 @@ export const Toast = styled.div<ToastProps>`
 
   display: flex;
 
+  & + div {
+    margin-top: 8px;
+  }
+
   ${(props) => ToastTypeVariations[props.type || 'info']}
 
   > svg {

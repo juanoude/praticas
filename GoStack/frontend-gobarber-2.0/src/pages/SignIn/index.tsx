@@ -9,6 +9,8 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 import logoImg from '../../assets/logo.svg';
 
+import { useToast } from '../../hooks/ToastContext';
+
 import { Container, Content, Background } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -22,6 +24,8 @@ interface SignInFormData {
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+
+  const { addToast } = useToast();
 
   const { user, signIn } = useAuth();
 
@@ -40,13 +44,20 @@ const SignIn: React.FC = () => {
       });
 
       await schema.validate(data, { abortEarly: false });
-      signIn({
+      await signIn({
         email: data.email,
         password: data.password
       });
     } catch (err) {
-      const errors = getValidationErrors(err);
-      formRef.current?.setErrors(errors);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        formRef.current?.setErrors(errors);
+      }
+      addToast({
+        type: 'error',
+        title: 'Erro fatal!',
+        description: 'Esse erro foi devido a picada fatal do mc livinho!'
+      });
     }
   }, []);
 
