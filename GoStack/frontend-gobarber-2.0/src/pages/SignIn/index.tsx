@@ -29,7 +29,7 @@ const SignIn: React.FC = () => {
 
   const { user, signIn } = useAuth();
 
-  console.log(user);
+  // console.log(user);
 
   const handleSubmit = useCallback(async (data: SignInFormData) => {
     // console.log(data);
@@ -54,7 +54,7 @@ const SignIn: React.FC = () => {
         formRef.current?.setErrors(errors);
       }
       addToast({
-        type: 'error',
+        // type: 'success',
         title: 'Erro fatal!',
         description: 'Esse erro foi devido a picada fatal do mc livinho!'
       });
