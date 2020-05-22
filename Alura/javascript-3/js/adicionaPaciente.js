@@ -5,12 +5,26 @@ botaoAdicionar.addEventListener('click', function () {
   var form = document.querySelector('form');
 
   var valores = inputValue(form);
+
+  var erros = validaPaciente(valores.peso, valores.altura);
+
+  if(erros.length > 0) {
+    var ul = document.querySelector("#erros");
+    erros.forEach( erro => {
+      var li = document.createElement('li');
+      li.textContent = erro;
+      ul.appendChild(li);
+    })
+  }
+  
   
   var pacienteTr = createTr(valores);
 
   var tabela = document.querySelector('#tabela-pacientes');
 
   tabela.appendChild(pacienteTr);
+
+  
 
   form.reset();
 
@@ -37,7 +51,7 @@ function createTr(valores) {
   pacienteTr.appendChild(montaTd(valores.gordura, "info-gordura"));
   pacienteTr.appendChild(montaTd(valores.imc, "info-imc"));
 
-  if(!validaPaciente(valores.peso, valores.altura)) {
+  if(!validaPeso(valores.peso) || !validaAltura(valores.altura)) {
     pacienteTr.classList.add("paciente-invalido");
   }
 

@@ -1,4 +1,5 @@
-import React, { useRef, useCallback, useContext } from 'react';
+import React, { useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -11,7 +12,7 @@ import logoImg from '../../assets/logo.svg';
 
 import { useToast } from '../../hooks/ToastContext';
 
-import { Container, Content, Background } from './styles';
+import { Container, Content, Background, AnimationContainer } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -52,9 +53,10 @@ const SignIn: React.FC = () => {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
         formRef.current?.setErrors(errors);
+        return;
       }
       addToast({
-        // type: 'success',
+        type: 'success',
         title: 'Erro fatal!',
         description: 'Esse erro foi devido a picada fatal do mc livinho!'
       });
@@ -64,25 +66,32 @@ const SignIn: React.FC = () => {
   return (
     <Container>
       <Content>
-        <img src={logoImg} alt="GoBarber" />
+        <AnimationContainer>
+          <img src={logoImg} alt="GoBarber" />
 
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <h1> Faça seu Logon</h1>
-          <Input type="text" icon={FiMail} name="email" placeholder="E-mail" />
-          <Input
-            type="password"
-            icon={FiLock}
-            name="password"
-            placeholder="Senha"
-          />
-          <Button type="submit"> Entrar </Button>
-          <a href="nada"> Esqueci minha senha </a>
-        </Form>
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <h1> Faça seu Logon</h1>
+            <Input
+              type="text"
+              icon={FiMail}
+              name="email"
+              placeholder="E-mail"
+            />
+            <Input
+              type="password"
+              icon={FiLock}
+              name="password"
+              placeholder="Senha"
+            />
+            <Button type="submit"> Entrar </Button>
+            <a href="nada"> Esqueci minha senha </a>
+          </Form>
 
-        <a href="cadastro">
-          <FiLogIn size={20} />
-          Cadastrar nova conta
-        </a>
+          <Link to="/signup">
+            <FiLogIn size={20} />
+            Cadastrar nova conta
+          </Link>
+        </AnimationContainer>
       </Content>
 
       <Background />
