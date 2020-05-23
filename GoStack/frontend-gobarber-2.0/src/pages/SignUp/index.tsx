@@ -27,46 +27,49 @@ const SignUp: React.FC = () => {
   const history = useHistory();
   const formRef = useRef<FormHandles>(null);
 
-  const handleSubmit = useCallback(async (data: SignUpFormData) => {
-    // console.log(data);
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SignUpFormData) => {
+      // console.log(data);
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Campo Obrigatório'),
-        email: Yup.string()
-          .required('Campo obrigatório')
-          .email('Preencha com um email válido'),
-        password: Yup.string().min(6, 'No mínimo 6 dígitos')
-      });
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Campo Obrigatório'),
+          email: Yup.string()
+            .required('Campo obrigatório')
+            .email('Preencha com um email válido'),
+          password: Yup.string().min(6, 'No mínimo 6 dígitos')
+        });
 
-      await schema.validate(data, { abortEarly: false });
+        await schema.validate(data, { abortEarly: false });
 
-      await api.post('/users', data);
+        await api.post('/users', data);
 
-      history.push('/');
+        history.push('/');
 
-      addToast({
-        title: 'Cadastro efetuado com sucesso',
-        description: 'Você já pode efetuar seu login no GoBarber',
-        type: 'success'
-      });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
+        addToast({
+          title: 'Cadastro efetuado com sucesso',
+          description: 'Você já pode efetuar seu login no GoBarber',
+          type: 'success'
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
 
-        return;
+          return;
+        }
+
+        addToast({
+          title: 'Erro no cadastro',
+          description:
+            'Ocorreu um erro ao tentar efetuar o cadastro, tente novamente.',
+          type: 'error'
+        });
       }
-
-      addToast({
-        title: 'Erro no cadastro',
-        description:
-          'Ocorreu um erro ao tentar efetuar o cadastro, tente novamente.',
-        type: 'error'
-      });
-    }
-  }, []);
+    },
+    [addToast, history]
+  );
 
   return (
     <Container>
