@@ -58,7 +58,7 @@ function validaAltura(altura) {
   return true;
 }
 
-function validaPaciente(peso, altura) {
+function validaPaciente(nome, peso, altura) {
   var pesoValido = validaPeso(peso);
   var alturaValida = validaAltura(altura);
   var erros = [];

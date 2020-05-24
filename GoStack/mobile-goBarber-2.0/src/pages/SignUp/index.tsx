@@ -13,14 +13,7 @@ import Input from '../../components/Input';
 
 import logoImg from '../../assets/logo.png';
 
-import {
-  Container,
-  Title,
-  ForgotPassword,
-  ForgotPasswordText,
-  CreateAccount,
-  CreateAccountText
-} from './styles';
+import { Container, Title, CreateAccount, CreateAccountText } from './styles';
 
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
