@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/mobile';
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  TextInput
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -23,7 +26,14 @@ import {
 } from './styles';
 
 const SignIn: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+  const inputRef = useRef<TextInput>(null);
+
+  const handleSignIn = useCallback((data) => {
+    console.log(data);
+  }, []);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -39,10 +49,37 @@ const SignIn: React.FC = () => {
 
             <Title> Faça seu logon </Title>
 
-            <Input icon="mail" name="email" placeholder="Digite o E-mail" />
-            <Input icon="lock" name="password" placeholder="Digite sua senha" />
+            <Form onSubmit={handleSignIn} ref={formRef}>
+              <Input
+                autoCapitalize="none"
+                keyboardType="email-address"
+                autoCorrect={false}
+                icon="mail"
+                name="email"
+                placeholder="Digite o E-mail"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  inputRef.current?.focus();
+                }}
+              />
+              <Input
+                ref={inputRef}
+                autoCapitalize="none"
+                secureTextEntry
+                textContentType="password"
+                icon="lock"
+                name="password"
+                placeholder="Digite sua senha"
+                returnKeyType="send"
+                onSubmitEditing={() => {
+                  formRef.current?.submitForm();
+                }}
+              />
 
-            <Button> Entrar </Button>
+              <Button onPress={() => formRef.current?.submitForm()}>
+                Entrar
+              </Button>
+            </Form>
 
             <ForgotPassword>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
