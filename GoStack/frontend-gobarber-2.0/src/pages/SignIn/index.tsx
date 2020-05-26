@@ -58,9 +58,9 @@ const SignIn: React.FC = () => {
         return;
       }
       addToast({
-        type: 'success',
+        type: 'error',
         title: 'Erro fatal!',
-        description: 'Esse erro foi devido a picada fatal do mc livinho!'
+        description: 'Erro ao tentar efetuar o cadastro'
       });
     }
   }, []);
