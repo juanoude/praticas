@@ -14,6 +14,7 @@ import {
 import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/Feather';
 
+import { useAuth } from '../../hooks/AuthContext';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import Button from '../../components/Button';
@@ -39,6 +40,9 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
   const inputRef = useRef<TextInput>(null);
+  const { user, signIn } = useAuth();
+
+  console.log(user);
 
   const handleSignIn = useCallback(async (data) => {
     // console.log(data);
@@ -53,10 +57,10 @@ const SignIn: React.FC = () => {
       });
 
       await schema.validate(data, { abortEarly: false });
-      // await signIn({
-      //   email: data.email,
-      //   password: data.password
-      // });
+      await signIn({
+        email: data.email,
+        password: data.password
+      });
 
       // history.push('/dashboard');
     } catch (err) {
