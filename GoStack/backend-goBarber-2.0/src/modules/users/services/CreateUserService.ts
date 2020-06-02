@@ -1,34 +1,32 @@
-import { getRepository } from 'typeorm';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
+import IUsersRepository from '../repositories/IUsersRepository';
 
-interface Request {
+interface IRequest {
   name: string;
   password: string;
   email: string;
 }
 
 class CreateUserService {
-  public async execute({ name, password, email }: Request): Promise<User> {
-    const userRepository = getRepository(User);
+  private usersRepository: IUsersRepository;
 
-    const validEmail = await userRepository.findOne({
-      where: {
-        email
-      }
-    });
+  constructor(usersRepository: IUsersRepository) {
+    this.usersRepository = usersRepository;
+  }
+
+  public async execute({ name, password, email }: IRequest): Promise<User> {
+    const validEmail = await this.usersRepository.findByEmail(email);
 
     if (validEmail) {
       throw new AppError('This Email is already being used!', 409);
     }
 
-    const user = userRepository.create({
+    const user = await this.usersRepository.create({
       name,
       password,
       email
     });
-
-    await userRepository.save(user);
 
     return user;
   }

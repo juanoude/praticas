@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { hash } from 'bcryptjs';
 import multer from 'multer';
 
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UserRepository';
 import CreateUserService from '@modules/users/services/CreateUserService';
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 
@@ -13,9 +14,11 @@ const userRouter = Router();
 
 userRouter.post('/', async (req, res) => {
   try {
+    const usersRepository = new UsersRepository();
+
     const { name, password, email } = req.body;
 
-    const createUserService = new CreateUserService();
+    const createUserService = new CreateUserService(usersRepository);
 
     const hashedPassword = await hash(password, 8);
 
@@ -38,7 +41,11 @@ userRouter.patch(
   ensureAuthenticated,
   upload.single('avatar'),
   async (req, res) => {
-    const updateUserAvatarService = new UpdateUserAvatarService();
+    const usersRepository = new UsersRepository();
+
+    const updateUserAvatarService = new UpdateUserAvatarService(
+      usersRepository
+    );
 
     const user = await updateUserAvatarService.execute({
       user_id: req.user.id,
