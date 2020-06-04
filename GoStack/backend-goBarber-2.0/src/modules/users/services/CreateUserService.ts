@@ -1,3 +1,4 @@
+import { inject, injectable } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
@@ -8,10 +9,14 @@ interface IRequest {
   email: string;
 }
 
+@injectable()
 class CreateUserService {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  constructor(
+    @inject('UsersRepository')
+    usersRepository: IUsersRepository
+  ) {
     this.usersRepository = usersRepository;
   }
 

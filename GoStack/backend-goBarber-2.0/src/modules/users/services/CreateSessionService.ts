@@ -1,3 +1,4 @@
+import { inject, injectable } from 'tsyringe';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
@@ -15,10 +16,14 @@ interface IResponse {
   token: string;
 }
 
+@injectable()
 class CreateSessionService {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  constructor(
+    @inject('UsersRepository')
+    usersRepository: IUsersRepository
+  ) {
     this.usersRepository = usersRepository;
   }
 

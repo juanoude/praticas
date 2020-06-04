@@ -1,3 +1,4 @@
+import { injectable, inject } from 'tsyringe';
 import fs from 'fs';
 import path from 'path';
 import User from '@modules/users/infra/typeorm/entities/User';
@@ -10,10 +11,14 @@ interface IRequest {
   avatarFilename: string;
 }
 
+@injectable()
 class UpdateUserAvatarService {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  constructor(
+    @inject('UsersRepository')
+    usersRepository: IUsersRepository
+  ) {
     this.usersRepository = usersRepository;
   }
 
