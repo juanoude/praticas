@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { hash } from 'bcryptjs';
 import { container } from 'tsyringe';
 
 import CreateUserService from '@modules/users/services/CreateUserService';
@@ -11,11 +10,9 @@ class UserController {
 
       const createUserService = container.resolve(CreateUserService);
 
-      const hashedPassword = await hash(password, 8);
-
       const user = await createUserService.execute({
         name,
-        password: hashedPassword,
+        password,
         email
       });
 
