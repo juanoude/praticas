@@ -2,6 +2,8 @@ node_modules/
 yarn.lock
 .env
 package-lock.json
+coverage/
 
 tmp/*
 !tmp/.gitkeep
+

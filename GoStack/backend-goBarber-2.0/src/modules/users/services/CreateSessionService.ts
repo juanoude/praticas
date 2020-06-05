@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
 import authConfig from '@config/auth';
 import AppError from '@shared/errors/AppError';
+import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
 import IUsersRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
@@ -20,11 +21,17 @@ interface IResponse {
 class CreateSessionService {
   private usersRepository: IUsersRepository;
 
+  private hashProvider: IHashProvider;
+
   constructor(
     @inject('UsersRepository')
-    usersRepository: IUsersRepository
+    usersRepository: IUsersRepository,
+
+    @inject('HashProvider')
+    hashProvider: IHashProvider
   ) {
     this.usersRepository = usersRepository;
+    this.hashProvider = hashProvider;
   }
 
   public async execute({ email, password }: IRequest): Promise<IResponse> {
@@ -34,7 +41,10 @@ class CreateSessionService {
       throw new AppError('This email/password combination is invalid!', 401);
     }
 
-    const validPassword = await compare(password, user.password);
+    const validPassword = await this.hashProvider.compareHash(
+      password,
+      user.password
+    );
 
     if (!validPassword) {
       throw new AppError('This email/password combination is invalid!', 401);
