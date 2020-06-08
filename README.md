@@ -5,7 +5,7 @@ Repositório com minhas práticas de programação seja de livros, cursos, tutor
 #### Bootcamp GoStack (RocketSeat)
 Criando aplicações do zero, FullStack com as melhores práticas em NodeJS, React e React Native:
   * Be the Hero! - [Veja o vídeo e a descrição](https://www.linkedin.com/posts/juanoude-aab492141_aprendi-muito-na-omniweek-11-como-resultado-activity-6652732585883516928-c8Zm)
-  * GitHub Explorer (Comming Soon)
+  * GitHub Explorer [Veja o vídeo e a descrição](https://www.linkedin.com/posts/juanoude-aab492141_reactjs-frontend-javascript-activity-6675704435987099648-sbKP)
   * GoBarber (Comming Soon)
   
 # Livros
