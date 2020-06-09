@@ -4,11 +4,14 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Generated
+  Generated,
+  ManyToOne,
+  JoinColumn
 } from 'typeorm';
+import User from '@modules/users/infra/typeorm/entities/User';
 
-@Entity('users')
-class User {
+@Entity('user_token')
+class UserToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -19,6 +22,10 @@ class User {
   @Column()
   user_id: string;
 
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -26,4 +33,4 @@ class User {
   updated_at: Date;
 }
 
-export default User;
+export default UserToken;

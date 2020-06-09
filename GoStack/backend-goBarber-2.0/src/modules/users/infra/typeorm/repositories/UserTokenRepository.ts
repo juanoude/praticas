@@ -18,11 +18,11 @@ class UserTokenRepository implements IUserToken {
   }
 
   public async generate(user_id: string): Promise<UserToken> {
-    const userToken = this.userTokenRepository.create({
+    let userToken = this.userTokenRepository.create({
       user_id
     });
 
-    this.userTokenRepository.save(userToken);
+    userToken = await this.userTokenRepository.save(userToken);
 
     return userToken;
   }
