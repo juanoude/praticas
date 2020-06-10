@@ -1,4 +1,5 @@
 import { injectable, inject } from 'tsyringe';
+import path from 'path';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IMailProvider from '../providers/EmailProvider/models/IMailProvider';
@@ -41,6 +42,15 @@ class SendForgotPasswordEmailService {
       );
     }
 
+    const templateFile = path.resolve(
+      __dirname,
+      '..',
+      'providers',
+      'EmailTemplateProvider',
+      'templates',
+      'forgot_password.hbs'
+    );
+
     const { token } = await this.userTokenRepository.generate(user.id);
 
     await this.mailProvider.sendEmail({
@@ -50,10 +60,10 @@ class SendForgotPasswordEmailService {
       },
       subject: 'Forgotten Password Recover',
       templateData: {
-        template: 'Olá {{name}}, seu token é {{token}}',
+        file: templateFile,
         variables: {
           name: user.name,
-          token
+          link: `http://localhost:3000/reset?token=${token}`
         }
       }
     });
