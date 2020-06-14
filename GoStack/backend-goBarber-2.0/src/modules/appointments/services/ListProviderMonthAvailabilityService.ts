@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { getDate, getHours, getDaysInMonth } from 'date-fns';
+import { getDate, getDaysInMonth } from 'date-fns';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepositories';
 
 interface IRequest {
@@ -33,7 +33,7 @@ class ListProviderMonthAvailabilityService {
       }
     );
 
-    const monthDaysTotal = getDaysInMonth(month);
+    const monthDaysTotal = getDaysInMonth(new Date(year, month - 1));
 
     const monthDaysArray = Array.from(
       { length: monthDaysTotal },
