@@ -24,9 +24,14 @@ class AppointmentsRepository implements IAppointmentsRepository {
 
   public async create({
     provider_id,
-    date
+    date,
+    user_id
   }: ICreateAppointmentDTO): Promise<Appointment> {
-    const appointment = this.ormRepository.create({ provider_id, date });
+    const appointment = this.ormRepository.create({
+      provider_id,
+      date,
+      user_id
+    });
     await this.ormRepository.save(appointment);
     return appointment;
   }
@@ -38,11 +43,11 @@ class AppointmentsRepository implements IAppointmentsRepository {
   }: IFindMonthlyAppointmentsDTO): Promise<Appointment[]> {
     const parsedMonth = String(month).padStart(2, '0');
 
-    const monthAppointments = this.ormRepository.find({
+    const monthAppointments = await this.ormRepository.find({
       where: {
         provider_id,
         date: Raw(
-          date => `to_char(${date}, MM-YYYY) = '${parsedMonth}-${year}'`
+          date => `to_char(${date}, 'MM-YYYY') = '${parsedMonth}-${year}'`
         )
       }
     });
@@ -64,7 +69,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
         provider_id,
         date: Raw(
           date =>
-            `to_char(${date}, DD-MM-YYYY) = '${parsedDay}-${parsedMonth}-${year}'`
+            `to_char(${date}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`
         )
       }
     });
