@@ -1,4 +1,5 @@
 import { inject, injectable } from 'tsyringe';
+import ICacheProvider from '@modules/users/providers/CacheProvider/models/ICacheProvider';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepositories';
 import Appointment from '../infra/typeorm/entities/Appointment';
 
@@ -13,7 +14,10 @@ interface IRequest {
 class ListProviderAppointmentsService {
   constructor(
     @inject('AppointmentsRepository')
-    private appointmentsRepository: IAppointmentsRepository
+    private appointmentsRepository: IAppointmentsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider
   ) {}
 
   public async execute({
@@ -30,6 +34,17 @@ class ListProviderAppointmentsService {
         year
       }
     );
+
+    await this.cacheProvider.save(
+      `providers-appointments-${provider_id}-${day}-${month}-${year}`,
+      JSON.stringify(dayAppointments)
+    );
+
+    const response = await this.cacheProvider.recover(
+      `providers-appointments-${provider_id}-${day}-${month}-${year}`
+    );
+
+    console.log(response);
 
     return dayAppointments;
   }
