@@ -7,17 +7,22 @@ class RedisCacheProvider implements ICacheProvider {
 
   constructor() {
     this.client = new Redis(cacheConfig.config.redis);
-    console.log('foi');
   }
 
   public async save(key: string, value: string): Promise<void> {
-    await this.client.set(key, value);
+    await this.client.set(key, JSON.stringify(value));
   }
 
-  public async recover(key: string): Promise<string | null> {
+  public async recover<T>(key: string): Promise<T | null> {
     const cache = await this.client.get(key);
 
-    return cache;
+    if (!cache) {
+      return null;
+    }
+
+    const parsedCache = JSON.parse(cache);
+
+    return parsedCache as T;
   }
 
   public async invalidate(key: string): Promise<void> {
