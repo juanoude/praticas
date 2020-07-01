@@ -38,8 +38,6 @@ class ListProviderDayAvailabilityService {
 
     const presentDate = new Date(Date.now());
 
-    console.log(presentDate);
-
     const hoursArray = Array.from({ length: 10 }, (v, index) => index + 8);
 
     const dayAvailability = hoursArray.map(hour => {
