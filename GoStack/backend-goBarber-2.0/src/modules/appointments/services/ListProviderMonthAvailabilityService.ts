@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { getDate, getDaysInMonth } from 'date-fns';
+import { getDate, getDaysInMonth, isAfter, endOfDay } from 'date-fns';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepositories';
 
 interface IRequest {
@@ -47,7 +47,9 @@ class ListProviderMonthAvailabilityService {
 
       return {
         day,
-        availability: appointmentsOnDay.length < 10
+        availability:
+          isAfter(endOfDay(new Date(year, month - 1, day)), Date.now()) &&
+          appointmentsOnDay.length < 10
       };
     });
 
