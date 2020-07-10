@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import DayPicker, { DayModifiers } from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
 
 import { FiPower, FiClock } from 'react-icons/fi';
 import { useAuth } from '../../hooks/AuthContext';
+import api from '../../services/api';
 
 import {
   Container,
@@ -17,11 +20,43 @@ import {
 } from './styles';
 import logoImg from '../../assets/logo.svg';
 
+interface MonthAvailabilityItem {
+  day: number;
+  availability: boolean;
+}
+
 const Dashboard: React.FC = () => {
   const { user, logOut } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  console.log(user);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+
+  const [monthAvailability, setMonthAvailability] = useState(new Date());
+
+  const handleDayChange = useCallback((day: Date, modifiers: DayModifiers) => {
+    if (modifiers.available) {
+      setSelectedDate(day);
+    }
+  }, []);
+
+  const handleMonthChange = useCallback((month: Date) => {
+    setSelectedMonth(month);
+
+    api.get(`?month=${month.getMonth}&year=${month.getFullYear}`);
+  }, []);
+
+  useEffect(() => {
+    api
+      .get(`/providers/${user.id}/month-availability`, {
+        params: {
+          month: selectedMonth.getMonth() + 1,
+          year: selectedMonth.getFullYear
+        }
+      })
+      .then((response) => {
+        setMonthAvailability(response.data);
+      });
+  }, [selectedMonth, user.id]);
 
   return (
     <Container>
@@ -116,7 +151,33 @@ const Dashboard: React.FC = () => {
             </Appointment>
           </Section>
         </Schedule>
-        <Calendar />
+        <Calendar>
+          <DayPicker
+            weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+            fromMonth={new Date()}
+            disabledDays={[{ daysOfWeek: [0, 6] }]}
+            modifiers={{
+              available: { daysOfWeek: [1, 2, 3, 4, 5] }
+            }}
+            selectedDays={selectedDate}
+            onMonthChange={handleMonthChange}
+            onDayClick={handleDayChange}
+            months={[
+              'Janeiro',
+              'Fevereiro',
+              'Março',
+              'Abril',
+              'Maio',
+              'Junho',
+              'Julho',
+              'Agosto',
+              'Setembro',
+              'Outubro',
+              'Novembro',
+              'Dezembro'
+            ]}
+          />
+        </Calendar>
       </Content>
     </Container>
   );
