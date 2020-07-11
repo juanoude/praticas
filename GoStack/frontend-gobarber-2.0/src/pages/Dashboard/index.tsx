@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import DayPicker, { DayModifiers } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
@@ -31,7 +31,9 @@ const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
-  const [monthAvailability, setMonthAvailability] = useState(new Date());
+  const [monthAvailability, setMonthAvailability] = useState<
+    MonthAvailabilityItem[]
+  >([]);
 
   const handleDayChange = useCallback((day: Date, modifiers: DayModifiers) => {
     if (modifiers.available) {
@@ -50,13 +52,28 @@ const Dashboard: React.FC = () => {
       .get(`/providers/${user.id}/month-availability`, {
         params: {
           month: selectedMonth.getMonth() + 1,
-          year: selectedMonth.getFullYear
+          year: selectedMonth.getFullYear()
         }
       })
       .then((response) => {
         setMonthAvailability(response.data);
       });
   }, [selectedMonth, user.id]);
+
+  const disabledDays = useMemo(() => {
+    const days = monthAvailability
+      .filter((monthDay) => monthDay.availability === false)
+      .map((monthDay) => {
+        const year = selectedMonth.getFullYear();
+        const month = selectedMonth.getMonth();
+        const { day } = monthDay;
+        return new Date(year, month, day);
+      });
+
+    console.log(monthAvailability, days);
+
+    return days;
+  }, [selectedMonth, monthAvailability]);
 
   return (
     <Container>
@@ -155,7 +172,7 @@ const Dashboard: React.FC = () => {
           <DayPicker
             weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
             fromMonth={new Date()}
-            disabledDays={[{ daysOfWeek: [0, 6] }]}
+            disabledDays={[{ daysOfWeek: [0, 6] }, ...disabledDays]}
             modifiers={{
               available: { daysOfWeek: [1, 2, 3, 4, 5] }
             }}
