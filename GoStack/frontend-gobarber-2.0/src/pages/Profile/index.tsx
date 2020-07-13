@@ -17,9 +17,12 @@ import Button from '../../components/Button';
 import { useAuth } from '../../hooks/AuthContext';
 import api from '../../services/api';
 
-interface SignInFormData {
+interface ProfileFormData {
   email: string;
-  password: string;
+  name: string;
+  password?: string;
+  old_password?: string;
+  password_confirmation?: string;
 }
 
 const Profile: React.FC = () => {
@@ -54,23 +57,54 @@ const Profile: React.FC = () => {
     [addToast]
   );
 
-  const handleSubmit = useCallback(async (data: SignInFormData) => {
+  const handleSubmit = useCallback(async (data: ProfileFormData) => {
     // console.log(data);
     try {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
+        name: Yup.string()
+          .required('Campo Obrigatório')
+          .min(6, 'Mínimo 6 dígitos'),
         email: Yup.string()
           .required('Campo obrigatório')
           .email('Preencha com um email válido'),
-        password: Yup.string().required('Campo obrigatório')
+        old_password: Yup.string(),
+        password: Yup.string().when('old_password', {
+          is: (val) => !!val,
+          then: Yup.string().required().min(6)
+        }),
+        password_confirmation: Yup.string().when('old_password', {
+          is: (val) => !!val,
+          then: Yup.string()
+            .required()
+            .min(6)
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        })
       });
 
       await schema.validate(data, { abortEarly: false });
-      await signIn({
-        email: data.email,
-        password: data.password
+
+      const {
+        name,
+        email,
+        old_password,
+        password,
+        password_confirmation
+      } = data;
+
+      const formData = {
+        name,
+        email,
+        ...(old_password
+          ? { old_password, password, password_confirmation }
+          : {})
+      };
+
+      api.put('/profile/update', formData).then((response) => {
+        updateUser(response.data);
       });
+
       history.push('/dashboard');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
