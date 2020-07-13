@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import DayPicker, { DayModifiers } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import { isToday, format, parseISO, isAfter } from 'date-fns';
@@ -163,7 +164,9 @@ const Dashboard: React.FC = () => {
 
             <div>
               <p>Seja bem-vindo</p>
-              <strong>{user.name}</strong>
+              <Link to="/profile">
+                <strong>{user.name}</strong>
+              </Link>
             </div>
           </Profile>
 
@@ -190,7 +193,9 @@ const Dashboard: React.FC = () => {
                   src={nextAppointment.user.avatar_url}
                   alt={nextAppointment.user.name}
                 />
+
                 <strong>{user.name}</strong>
+
                 <span>
                   <FiClock />
                   {nextAppointment.formattedHour}
