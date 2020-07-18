@@ -18,7 +18,7 @@ export const Header = styled.View`
 `;
 
 export const HeaderText = styled.Text`
-  color: white;
+  color: #f4ede8;
   font-size: 20px;
   font-family: 'RobotoSlab-Regular';
   line-height: 28px;

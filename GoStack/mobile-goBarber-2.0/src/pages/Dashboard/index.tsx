@@ -43,9 +43,12 @@ const Dashboard: React.FC = () => {
     navigation.navigate('Profile');
   }, [navigation]);
 
-  const navigateToCreateAppointment = useCallback(() => {
-    navigation.navigate('CreateAppointment');
-  }, [navigation]);
+  const navigateToCreateAppointment = useCallback(
+    (providerId: string) => {
+      navigation.navigate('CreateAppointment', { providerId });
+    },
+    [navigation]
+  );
 
   return (
     <Container>
@@ -66,7 +69,9 @@ const Dashboard: React.FC = () => {
         }
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ProviderContainer onPress={navigateToCreateAppointment}>
+          <ProviderContainer
+            onPress={() => navigateToCreateAppointment(item.id)}
+          >
             <ProviderAvatar source={{ uri: item.avatar_url }} />
 
             <ProviderInfo>
