@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import DatePicker from '@react-native-community/datetimepicker';
 import {
   Container,
   Header,
@@ -11,7 +13,9 @@ import {
   ProviderContainer,
   ProviderAvatar,
   ProviderName,
-  ProvidersListContainer
+  ProvidersListContainer,
+  CalendarButton,
+  ButtonContainer
 } from './styles';
 import { useAuth } from '../../hooks/AuthContext';
 
@@ -35,6 +39,8 @@ const CreateAppointment: React.FC = () => {
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState(providerId);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     api.get('/providers').then((response) => {
@@ -49,6 +55,23 @@ const CreateAppointment: React.FC = () => {
   const handleBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+
+  const handleToggleShow = useCallback(() => {
+    setShowDatePicker((state) => !state);
+  }, []);
+
+  const handleChangeDate = useCallback(
+    (event: any, selectedOnDatePicker: Date) => {
+      if (Platform.OS === 'android') {
+        handleToggleShow();
+        // setShowDatePicker((state) => !state);
+      }
+
+      const currentDate = selectedOnDatePicker || selectedDate;
+      setSelectedDate(currentDate);
+    },
+    [selectedDate]
+  );
 
   return (
     <Container>
@@ -81,6 +104,21 @@ const CreateAppointment: React.FC = () => {
           )}
         />
       </ProvidersListContainer>
+
+      <ButtonContainer>
+        <CalendarButton onPress={handleToggleShow}>
+          <Icon name="calendar" size={28} />
+        </CalendarButton>
+      </ButtonContainer>
+      {showDatePicker && (
+        <DatePicker
+          testID="dateTimePicker"
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={handleChangeDate}
+        />
+      )}
     </Container>
   );
 };

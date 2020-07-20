@@ -70,3 +70,16 @@ export const ProviderName = styled.Text<ProviderNameProps>`
   color: ${(props) => (props.selected ? '#232129' : '#f4ede8')};
   margin-left: 10px;
 `;
+
+export const ButtonContainer = styled.View`
+  align-items: center;
+`;
+
+export const CalendarButton = styled(RectButton)`
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background: #ff9000;
+  align-items: center;
+  justify-content: center;
+`;
