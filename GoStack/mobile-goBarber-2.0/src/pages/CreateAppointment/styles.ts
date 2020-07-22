@@ -75,6 +75,8 @@ export const ButtonContainer = styled.View`
   align-items: center;
 `;
 
+// ButtonContainer.displayName = 'EncontreMe';
+
 export const CalendarButton = styled(RectButton)`
   width: 56px;
   height: 56px;

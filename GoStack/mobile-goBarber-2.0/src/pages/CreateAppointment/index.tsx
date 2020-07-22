@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { Platform, Text } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import DatePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 import {
   Container,
   Header,
@@ -65,7 +66,6 @@ const CreateAppointment: React.FC = () => {
       })
       .then((response) => {
         setAvailability(response.data);
-        console.log(response.data);
       });
   }, [selectedDate, selectedProvider]);
 
@@ -84,15 +84,46 @@ const CreateAppointment: React.FC = () => {
   const handleChangeDate = useCallback(
     (event: Event, selectedOnDatePicker: Date | undefined) => {
       if (Platform.OS === 'android') {
-        handleToggleShow();
-        // setShowDatePicker((state) => !state);
+        setShowDatePicker((state) => !state);
       }
 
       const currentDate = selectedOnDatePicker || selectedDate;
       setSelectedDate(currentDate);
     },
-    [selectedDate, handleToggleShow]
+    [selectedDate]
   );
+
+  const morningAvailability = useMemo(() => {
+    if (availability) {
+      const morningHours = availability
+        .filter(({ hour }) => hour < 12)
+        .map((item) => ({
+          hour: item.hour,
+          available: item.availability,
+          formattedHour: format(new Date().setHours(item.hour), 'HH:00')
+        }));
+
+      return morningHours;
+    }
+
+    return [];
+  }, [availability]);
+
+  const afternoonAvailability = useMemo(() => {
+    if (availability) {
+      const afternoonHours = availability
+        .filter(({ hour }) => hour >= 12)
+        .map((item) => ({
+          hour: item.hour,
+          available: item.availability,
+          formattedHour: format(new Date().setHours(item.hour), 'HH:00')
+        }));
+
+      return afternoonHours;
+    }
+
+    return [];
+  }, [availability]);
 
   return (
     <Container>
@@ -140,6 +171,14 @@ const CreateAppointment: React.FC = () => {
           onChange={handleChangeDate}
         />
       )}
+
+      {morningAvailability.map((hour) => (
+        <Text>{hour.formattedHour}</Text>
+      ))}
+
+      {afternoonAvailability.map((hour) => (
+        <Text>{hour.formattedHour}</Text>
+      ))}
     </Container>
   );
 };
