@@ -12,10 +12,21 @@ interface ProviderNameProps {
   selected: boolean;
 }
 
+interface ScheduleProps {
+  available: boolean;
+  selected: boolean;
+}
+
+interface ScheduleTextProps {
+  selected: boolean;
+}
+
 export const Container = styled.View`
   flex: 1;
   background-color: #312e38;
 `;
+
+export const Content = styled.ScrollView``;
 
 export const Header = styled.View`
   background: #28262e;
@@ -83,5 +94,39 @@ export const CalendarButton = styled(RectButton)`
   border-radius: 28px;
   background: #ff9000;
   align-items: center;
+  justify-content: center;
+`;
+
+export const SchedulesSection = styled.View`
+  padding-top: 4px;
+`;
+export const PeriodTitle = styled.Text`
+  font-size: 24px;
+  font-family: 'RobotoSlab-Regular';
+  color: gray;
+  margin: 10px 0;
+`;
+export const ScheduleList = styled.ScrollView.attrs({
+  horizontal: true,
+  contentContainerStyle: {
+    paddingHorizontal: 24
+  }
+})``;
+export const Schedule = styled(RectButton)<ScheduleProps>`
+  background: ${(props) =>
+    props.selected && props.available ? '#ff9000' : '#3e3b47'};
+  opacity: ${(props) => (props.available ? 1 : 0.3)};
+  padding: 12px;
+  margin-right: 10px;
+  border-radius: 10px;
+`;
+export const ScheduleText = styled.Text<ScheduleTextProps>`
+  color: ${(props) => (props.selected ? '#232129' : '#f4ede8')};
+  font-size: 16px;
+  font-family: 'RobotoSlab-Regular';
+`;
+
+export const SendButtonContainer = styled.View`
+  margin-top: 30px;
   justify-content: center;
 `;
