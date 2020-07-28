@@ -155,7 +155,13 @@ const CreateAppointment: React.FC = () => {
         date: finalDate
       });
 
-      navigation.navigate('AppointmentCreated', { date: date.getTime() });
+      const provider = providers.find((p) => providerId === p.id);
+      const providerName = provider?.name;
+
+      navigation.navigate('AppointmentCreated', {
+        date: date.getTime(),
+        provider: providerName
+      });
     } catch (e) {
       Alert.alert(
         'Erro ao criar agendamento',
