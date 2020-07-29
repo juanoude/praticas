@@ -135,9 +135,22 @@ const Profile: React.FC = () => {
           Alert.alert('Erro ao abrir foto', 'Tente novamente');
         }
 
-        const source = { uri: response.uri };
+        const formData = new FormData();
 
-        console.log(source);
+        formData.append('avatar', {
+          type: response.type,
+          name: response.fileName,
+          uri: response.uri
+        });
+
+        console.log(formData);
+
+        api.patch('/users/avatar', formData).then(
+          (patchResponse) => {
+            updateUser(patchResponse.data);
+          },
+          (error) => console.log(error)
+        );
       });
     }
   }, []);
