@@ -12,6 +12,7 @@ interface UserData {
   id: string;
   name: string;
   avatar_url: string;
+  email: string;
 }
 
 interface AuthState {
@@ -29,6 +30,7 @@ interface AuthContext {
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   logOut(): void;
+  updateUser(user: any): Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContext>({} as AuthContext);
@@ -73,8 +75,19 @@ export const AuthProvider: React.FC = ({ children }) => {
     api.defaults.headers.authorization = `Bearer ${token}`;
     setData({ token, user });
   }, []);
+
+  const updateUser = useCallback(async (user) => {
+    await AsyncStorage.setItem('@GoBarber:user', JSON.stringify(user));
+    setData((state) => ({
+      token: state.token,
+      user
+    }));
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, loading, logOut }}>
+    <AuthContext.Provider
+      value={{ user: data.user, signIn, loading, logOut, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

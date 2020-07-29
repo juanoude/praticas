@@ -4,8 +4,10 @@ import {
   Platform,
   ScrollView,
   TextInput,
-  Alert
+  Alert,
+  PermissionsAndroid
 } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
 import { Form } from '@unform/mobile';
@@ -37,7 +39,7 @@ const Profile: React.FC = () => {
   const confirmPasswordRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const handleSignUp = useCallback(async (data) => {
     // console.log(data);
@@ -45,21 +47,45 @@ const Profile: React.FC = () => {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        name: Yup.string().required('Campo obrigatório'),
+        name: Yup.string()
+          .required('Campo Obrigatório')
+          .min(6, 'Mínimo 6 dígitos'),
         email: Yup.string()
           .required('Campo obrigatório')
           .email('Preencha com um email válido'),
-        password: Yup.string().min(6, 'Deve conter no mínimo 6 dígitos')
+        old_password: Yup.string(),
+        password: Yup.string().when('old_password', {
+          is: (val) => !!val,
+          then: Yup.string().required().min(6)
+        }),
+        password_confirmation: Yup.string().when('old_password', {
+          is: (val) => !!val,
+          then: Yup.string()
+            .required()
+            .min(6)
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        })
       });
 
       await schema.validate(data, { abortEarly: false });
 
-      await api.post('/users', data);
+      const { name, email, old_password, password } = data;
 
-      Alert.alert(
-        'Cadastro realizado com sucesso',
-        'efetue o login com o usuário e senha criados'
-      );
+      const sendData = {
+        name,
+        email,
+        ...(old_password
+          ? {
+              old_password,
+              password
+            }
+          : {})
+      };
+      console.log(sendData);
+
+      const response = await api.put('/profile/update', sendData);
+
+      await updateUser(response.data);
 
       navigation.goBack();
     } catch (err) {
@@ -68,7 +94,51 @@ const Profile: React.FC = () => {
         formRef.current?.setErrors(errors);
         return;
       }
-      Alert.alert('Erro na autenticação', 'cheque os dados e tente novamente');
+      Alert.alert('Erro na atualização', 'tente novamente');
+    }
+  }, []);
+
+  const handleAvatar = useCallback(async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'Permissão',
+        message: 'Permita que nosso app acesse a camera',
+        buttonNeutral: 'Depois',
+        buttonNegative: 'Cancelar',
+        buttonPositive: 'Permitir'
+      }
+    );
+
+    const granted2 = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Permissão',
+        message: 'Permita que nosso app acesse a camera',
+        buttonNeutral: 'Depois',
+        buttonNegative: 'Cancelar',
+        buttonPositive: 'Permitir'
+      }
+    );
+
+    if (
+      granted === PermissionsAndroid.RESULTS.GRANTED &&
+      granted2 === PermissionsAndroid.RESULTS.GRANTED
+    ) {
+      ImagePicker.showImagePicker({}, (response) => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.error) {
+          console.log(response.error);
+          Alert.alert('Erro ao abrir foto', 'Tente novamente');
+        }
+
+        const source = { uri: response.uri };
+
+        console.log(source);
+      });
     }
   }, []);
 
@@ -91,7 +161,7 @@ const Profile: React.FC = () => {
           </IconContainer>
           <AvatarContainer>
             <Avatar source={{ uri: user.avatar_url }} />
-            <AvatarButton>
+            <AvatarButton onPress={handleAvatar}>
               <Icon name="camera" size={25} />
             </AvatarButton>
           </AvatarContainer>
@@ -101,6 +171,7 @@ const Profile: React.FC = () => {
           <Form ref={formRef} onSubmit={handleSignUp}>
             <Input
               autoCapitalize="words"
+              defaultValue={user.name}
               icon="user"
               name="name"
               placeholder="Nome"
@@ -114,6 +185,7 @@ const Profile: React.FC = () => {
               autoCorrect={false}
               keyboardType="email-address"
               autoCapitalize="none"
+              defaultValue={user.email}
               icon="mail"
               name="email"
               placeholder="E-mail"
