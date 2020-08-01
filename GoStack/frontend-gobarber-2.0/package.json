@@ -27,6 +27,14 @@
     "uuidv4": "^6.0.8",
     "yup": "^0.28.5"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/components/**/*.tsx",
+      "src/hooks/**/*.tsx",
+      "src/pages/**/*.tsx",
+      "!src/hooks/index.tsx"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
