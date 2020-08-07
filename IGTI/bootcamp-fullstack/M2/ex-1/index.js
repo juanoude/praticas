@@ -204,5 +204,5 @@ async function getSmallestOfAllNames() {
   console.log(response);
 }
 
-getSmallestOfAllNames();
+// getSmallestOfAllNames();
 

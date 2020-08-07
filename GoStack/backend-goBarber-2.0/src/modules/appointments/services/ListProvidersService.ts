@@ -16,9 +16,11 @@ class ListProvidersService {
   ) {}
 
   public async execute(user_id: string): Promise<User[]> {
-    let providers = await this.cacheProvider.recover<User[]>(
-      `provider-list:${user_id}`
-    );
+    // let providers = await this.cacheProvider.recover<User[]>(
+    //   `provider-list:${user_id}`
+    // );
+
+    let providers = null;
 
     if (!providers) {
       providers = await this.usersRepository.findProviders({
