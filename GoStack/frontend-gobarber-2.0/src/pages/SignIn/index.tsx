@@ -33,37 +33,42 @@ const SignIn: React.FC = () => {
 
   // console.log(user);
 
-  const handleSubmit = useCallback(async (data: SignInFormData) => {
-    // console.log(data);
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SignInFormData) => {
+      // console.log(data);
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .required('Campo obrigatório')
-          .email('Preencha com um email válido'),
-        password: Yup.string().required('Campo obrigatório')
-      });
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('Campo obrigatório')
+            .email('Preencha com um email válido'),
+          password: Yup.string().required('Campo obrigatório')
+        });
 
-      await schema.validate(data, { abortEarly: false });
-      await signIn({
-        email: data.email,
-        password: data.password
-      });
-      history.push('/dashboard');
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
-        return;
+        await schema.validate(data, { abortEarly: false });
+
+        await signIn({
+          email: data.email,
+          password: data.password
+        });
+
+        history.push('/dashboard');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
+          return;
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro fatal!',
+          description: 'Erro ao tentar efetuar o cadastro'
+        });
       }
-      addToast({
-        type: 'error',
-        title: 'Erro fatal!',
-        description: 'Erro ao tentar efetuar o cadastro'
-      });
-    }
-  }, []);
+    },
+    [addToast, history, signIn]
+  );
 
   return (
     <Container>
