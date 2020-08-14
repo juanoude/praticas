@@ -4,6 +4,7 @@ yarn.lock
 package-lock.json
 **/coverage/
 typeorm.json
+.vscode
 
 */tmp/*
 !*/tmp/uploads/.gitkeep

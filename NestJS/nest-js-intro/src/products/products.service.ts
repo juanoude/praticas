@@ -25,8 +25,10 @@ export class ProductsService {
     }));
   }
 
-  async getProduct(id: string): Promise<IProduct> {
-    const product = await this.findProduct(id);
+  async getProduct(product_id: string): Promise<IProduct> {
+    const product = await this.productModel.findById(product_id).exec();
+
+    if (!product) throw new NotFoundException('not found');
 
     return {
       id: product.id,
@@ -52,12 +54,17 @@ export class ProductsService {
     return result.id;
   }
 
-  async updateProduct({ id, name, description, price }): Promise<IProduct> {
-    const product = await this.findProduct(id);
+  async updateProduct(updatedProduct: IProduct): Promise<IProduct> {
+    const product = await this.productModel.findById(updatedProduct.id);
 
-    if (name) product.name = name;
-    if (description) product.description = description;
-    if (price) product.price = price;
+    if (!product) throw new NotFoundException('not found');
+
+    // skipping null values on replacement
+    const keyAndValues = Object.entries(updatedProduct);
+    keyAndValues.forEach(current => {
+      if (current[0] === 'id') return;
+      if (current[1]) product[current[0]] = current[1]
+    });
 
     await product.save();
 
@@ -67,21 +74,6 @@ export class ProductsService {
       description: product.description,
       price: product.price,
     };
-  }
-
-  private async findProduct(id: string): Promise<Product> {
-    let product;
-    try {
-      product = await this.productModel.findById(id).exec();
-
-      if (!product) {
-        throw new Error();
-      }
-    } catch (err) {
-      throw new NotFoundException('product not found');
-    }
-
-    return;
   }
 
   async deleteProduct(product_id: string): Promise<void> {
