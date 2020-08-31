@@ -1,5 +1,27 @@
 h1 {
   color: #369;
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 250%;
+}
+
+nav {
+  width: 200px;
+  display: flex;
+  justify-content: space-around;
+}
+
+nav a {
+  background-color: #e76f51;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+nav a:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+app-messages {
+  margin: 10px;
 }

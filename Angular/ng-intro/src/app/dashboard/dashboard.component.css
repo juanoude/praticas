@@ -1,0 +1,16 @@
+.top {
+  width: 530px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.top a {
+  background-color: #e9c46a;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #2b2d42;
+}
