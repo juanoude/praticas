@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.period {
+  display: flex;
+  align-items: center;
+}
+
+.custom-select {
+  width: 150px;
+  margin: 0 15px;
+}
+
+.totals {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 500px;
+}
+
+b {
+  margin: 0 10px;
+}
+
+p {
+  display: flex;
+  align-items: center;
+}
+
+.revenue, .cost, .balance {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.revenue {
+  color: green;
+}
+
+.cost {
+  color: red;
+}
